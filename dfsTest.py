@@ -1,5 +1,13 @@
 from collections import defaultdict
 
+class Loop:
+    def __init__(self):
+        pass
+        
+    def isEqual(self, anotherLoop):
+        pass
+
+
 # 查找所有环算法 cf. https://www.freesion.com/article/9695621669/
 # 环的数据结构 cf. https://blog.csdn.net/qq_38204302/article/details/104823470
 class Graph:
