@@ -3,10 +3,11 @@
 
 import pandas as pd
 import graphDfs
+import simplejson as json
 
 pd.set_option('display.unicode.east_asian_width', True)
 typeMatchups = pd.read_csv("typeMatchups/typeMatchups.csv")
-typeList = typeMatchups.to.unique()
+typeList = typeMatchups.to.unique().tolist()
 matchupDictList = typeMatchups.to_dict('records')
 
 # TODO 属性相克的邻接矩阵，用于核对CSV的数据是否正确
@@ -32,7 +33,7 @@ for _ in toRemove:
 print(f'Bidirectional: {len(toRemove)}')
 print(f'>Current Left: {len(matchupDictList)}')
 
-bidirectionalEffect.findAllLoops(typeList)
+bidirectionalEffect.findAllLoops(typeList)  
 bidirectionalEffect.getNonLoopGraph()
 
 # 自指关系，即自己打自己时的特殊关系
@@ -43,6 +44,10 @@ for _attack in matchupDictList:
 
 for _ in selfAttack:
     matchupDictList.remove(_)
+
+# TODO export to json
+with open('typeMatchups/try.json', 'w') as f:
+    json.dump(matchupDictList, f)
 
 print(f'Self Attack  : {len(selfAttack)}')
 print(f'>Current Left: {len(matchupDictList)}')

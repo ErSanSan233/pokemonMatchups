@@ -1,6 +1,7 @@
 from collections import defaultdict
 import copy
 
+
 def getDictRemoveEmptyKeys(_dict:dict):
     _result = copy.deepcopy(_dict)
     for _key in _dict:
@@ -8,7 +9,7 @@ def getDictRemoveEmptyKeys(_dict:dict):
             del _result[_key]
     return _result
 
-# TODO Graph to csv
+# TODO Graph to dict, dict to CSV
 # 图的数据结构 cf. https://blog.csdn.net/qq_38204302/article/details/104823470
 class Graph:
     def __init__(self):
@@ -107,6 +108,14 @@ class Graph:
             nbNonLoop += len(nonLoopGraph[_chain])
         print(f'>Not in Loop : {nbNonLoop}')
         return nonLoopGraph
+    
+    def toMatchupDict(self, _effect):
+        _dict = []
+        for _from in self.graph:
+            for _to in self.graph[_from]:
+                _dict.append({'from': _from, 'to':_from, 'effect': _effect})
+        return _dict
+
 
 # g = Graph(7)
 # g.addEdge('0', '1')
