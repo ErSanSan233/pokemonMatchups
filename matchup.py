@@ -32,22 +32,28 @@ for _ in toRemove:
 
 print(f'Bidirectional: {len(toRemove)}')
 print(f'>Current Left: {len(matchupDictList)}')
-
 bidirectionalEffect.findAllLoops(typeList)  
-bidirectionalEffect.getNonLoopGraph()
+
+loops = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['loop'], '抗克环')
+nonloops = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['nonLoop'], '抗克')
+# print(loops)
+# print(nonloops)
 
 # 自指关系，即自己打自己时的特殊关系
 selfAttack = []
 for _attack in matchupDictList:
     if _attack['from'] == _attack['to']:
         selfAttack.append(_attack)
+# print(selfAttack)
 
 for _ in selfAttack:
     matchupDictList.remove(_)
 
-# TODO export to json
-with open('typeMatchups/try.json', 'w') as f:
+# json件导入查了半天没搞明白，直接写成js文件
+with open('typeMatchups/ordinaryMatchups.js', 'w') as f:
+    f.write('var ordinaryMatchups = ')
     json.dump(matchupDictList, f)
+    f.write(';')
 
 print(f'Self Attack  : {len(selfAttack)}')
 print(f'>Current Left: {len(matchupDictList)}')

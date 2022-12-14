@@ -1,35 +1,19 @@
+// graph
 var dom = document.getElementById('container');
-
 var myChart = echarts.init(dom, null, {
     renderer: 'canvas',
     useDirtyRect: false
 });
 var app = {};
-
 var option;
 
-
-
-var linkTypeList = {
-    double: 'x2',
-    half: 'x0.5',
-    normal: 'x1',
-    useless: 'x0'
-};
-
-// 不同系的属性自己打自己有3种情况
+// nodes
 var pokemonTypeNodes = [];
 var pokemonTypeCategories = [];
 
-// nodes
 for (var i = 0; i < typeList.length; i++) {
     pokemonTypeNodes.push({
-        name: typeList[i] + '攻',
-        category: typeList[i],
-    })
-
-    pokemonTypeNodes.push({
-        name: typeList[i] + '防',
+        name: typeList[i],
         category: typeList[i],
     })
 
@@ -38,151 +22,123 @@ for (var i = 0; i < typeList.length; i++) {
     })
 }
 
-// x2 links
-var x2LineStyle = {
-    color: 'green',
-    width: 2,
-    curveness: 0, //节点连线的曲率，0-1 越大越弯。
+// supplement interactions
+var isOn = {
+    loop: true, //抗克环
+    noLoopBidirectional: true, //抗克
+    self: true, //显示为节点
+    superEffective: true,
+    notVeryEffective: true,
+    notEffective: true,
+}
+//TODO
+function switchSuperEffective() {
+    isOn.superEffective = !isOn.superEffective;
+    option.series[0].links = pyDictListToLinks(ordinaryMatchups);
+    myChart.setOption(option);
+}
 
-};
-
-// x0.5 links
-// var halfLineStyle = {
-//     color: 'red',
-//     width: 2,
-//     curveness: 0,
-// };
-
-var links = [
-    { source: '格斗攻', target: '一般防', lineStyle: x2LineStyle },
-    // { source: '水攻', target: '火防', lineStyle: x2LineStyle },
-    // { source: '地面攻', target: '火防', lineStyle: x2LineStyle },
-    // { source: '岩石攻', target: '火防', lineStyle: x2LineStyle },
-    // { source: '电攻', target: '水防', lineStyle: x2LineStyle },
-    // { source: '草攻', target: '水防', lineStyle: x2LineStyle },
-    // { source: '地面攻', target: '电防', lineStyle: x2LineStyle },
-    // { source: '火攻', target: '草防', lineStyle: x2LineStyle },
-    // { source: '冰攻', target: '草防', lineStyle: x2LineStyle },
-    // { source: '毒攻', target: '草防', lineStyle: x2LineStyle },
-    // { source: '飞行攻', target: '草防', lineStyle: x2LineStyle },
-    // { source: '虫攻', target: '草防', lineStyle: x2LineStyle },
-    // { source: '火攻', target: '冰防', lineStyle: x2LineStyle },
-    // { source: '格斗攻', target: '冰防', lineStyle: x2LineStyle },
-    // { source: '岩石攻', target: '冰防', lineStyle: x2LineStyle },
-    // { source: '钢攻', target: '冰防', lineStyle: x2LineStyle },
-    // { source: '飞行攻', target: '格斗防', lineStyle: x2LineStyle },
-    // { source: '超能攻', target: '格斗防', lineStyle: x2LineStyle },
-    // { source: '妖精攻', target: '格斗防', lineStyle: x2LineStyle },
-    // { source: '地面攻', target: '毒防', lineStyle: x2LineStyle },
-    // { source: '超能攻', target: '毒防', lineStyle: x2LineStyle },
-    // { source: '水攻', target: '地面防', lineStyle: x2LineStyle },
-    // { source: '草攻', target: '地面防', lineStyle: x2LineStyle },
-    // { source: '冰攻', target: '地面防', lineStyle: x2LineStyle },
-    // { source: '电攻', target: '飞行防', lineStyle: x2LineStyle },
-    // { source: '冰攻', target: '飞行防', lineStyle: x2LineStyle },
-    // { source: '岩石攻', target: '飞行防', lineStyle: x2LineStyle },
-    // { source: '虫攻', target: '超能防', lineStyle: x2LineStyle },
-    // { source: '幽灵攻', target: '超能防', lineStyle: x2LineStyle },
-    // { source: '恶攻', target: '超能防', lineStyle: x2LineStyle },
-    // { source: '火攻', target: '虫防', lineStyle: x2LineStyle },
-    // { source: '飞行攻', target: '虫防', lineStyle: x2LineStyle },
-    // { source: '岩石攻', target: '虫防', lineStyle: x2LineStyle },
-    // { source: '水攻', target: '岩石防', lineStyle: x2LineStyle },
-    // { source: '草攻', target: '岩石防', lineStyle: x2LineStyle },
-    // { source: '格斗攻', target: '岩石防', lineStyle: x2LineStyle },
-    // { source: '地面攻', target: '岩石防', lineStyle: x2LineStyle },
-    // { source: '钢攻', target: '岩石防', lineStyle: x2LineStyle },
-    // { source: '幽灵攻', target: '幽灵防', lineStyle: x2LineStyle },
-    // { source: '恶攻', target: '幽灵防', lineStyle: x2LineStyle },
-    // { source: '冰攻', target: '龙防', lineStyle: x2LineStyle },
-    // { source: '龙攻', target: '龙防', lineStyle: x2LineStyle },
-    // { source: '妖精攻', target: '龙防', lineStyle: x2LineStyle },
-    // { source: '格斗攻', target: '恶防', lineStyle: x2LineStyle },
-    // { source: '虫攻', target: '恶防', lineStyle: x2LineStyle },
-    // { source: '妖精攻', target: '恶防', lineStyle: x2LineStyle },
-    // { source: '火攻', target: '钢防', lineStyle: x2LineStyle },
-    // { source: '格斗攻', target: '钢防', lineStyle: x2LineStyle },
-    // { source: '地面攻', target: '钢防', lineStyle: x2LineStyle },
-    // { source: '毒攻', target: '妖精防', lineStyle: x2LineStyle },
-    // { source: '钢攻', target: '妖精防', lineStyle: x2LineStyle },
-    // { source: '火攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '冰攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '钢攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '妖精攻', target: '火防', lineStyle: halfLineStyle },
-    // { source: '火攻', target: '水防', lineStyle: halfLineStyle },
-    // { source: '水攻', target: '水防', lineStyle: halfLineStyle },
-    // { source: '冰攻', target: '水防', lineStyle: halfLineStyle },
-    // { source: '钢攻', target: '水防', lineStyle: halfLineStyle },
-    // { source: '电攻', target: '电防', lineStyle: halfLineStyle },
-    // { source: '飞行攻', target: '电防', lineStyle: halfLineStyle },
-    // { source: '钢攻', target: '电防', lineStyle: halfLineStyle },
-    // { source: '水攻', target: '草防', lineStyle: halfLineStyle },
-    // { source: '电攻', target: '草防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '草防', lineStyle: halfLineStyle },
-    // { source: '地面攻', target: '草防', lineStyle: halfLineStyle },
-    // { source: '冰攻', target: '冰防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '格斗防', lineStyle: halfLineStyle },
-    // { source: '岩石攻', target: '格斗防', lineStyle: halfLineStyle },
-    // { source: '恶攻', target: '格斗防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '毒防', lineStyle: halfLineStyle },
-    // { source: '格斗攻', target: '毒防', lineStyle: halfLineStyle },
-    // { source: '毒攻', target: '毒防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '毒防', lineStyle: halfLineStyle },
-    // { source: '毒攻', target: '地面防', lineStyle: halfLineStyle },
-    // { source: '岩石攻', target: '地面防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '飞行防', lineStyle: halfLineStyle },
-    // { source: '格斗攻', target: '飞行防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '飞行防', lineStyle: halfLineStyle },
-    // { source: '格斗攻', target: '超能防', lineStyle: halfLineStyle },
-    // { source: '超能攻', target: '超能防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '虫防', lineStyle: halfLineStyle },
-    // { source: '格斗攻', target: '虫防', lineStyle: halfLineStyle },
-    // { source: '地面攻', target: '虫防', lineStyle: halfLineStyle },
-    // { source: '一般攻', target: '岩石防', lineStyle: halfLineStyle },
-    // { source: '火攻', target: '岩石防', lineStyle: halfLineStyle },
-    // { source: '毒攻', target: '岩石防', lineStyle: halfLineStyle },
-    // { source: '飞行攻', target: '岩石防', lineStyle: halfLineStyle },
-    // { source: '毒攻', target: '幽灵防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '幽灵防', lineStyle: halfLineStyle },
-    // { source: '火攻', target: '龙防', lineStyle: halfLineStyle },
-    // { source: '水攻', target: '龙防', lineStyle: halfLineStyle },
-    // { source: '电攻', target: '龙防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '龙防', lineStyle: halfLineStyle },
-    // { source: '幽灵攻', target: '恶防', lineStyle: halfLineStyle },
-    // { source: '恶攻', target: '恶防', lineStyle: halfLineStyle },
-    // { source: '一般攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '草攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '冰攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '飞行攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '超能攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '岩石攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '龙攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '钢攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '妖精攻', target: '钢防', lineStyle: halfLineStyle },
-    // { source: '格斗攻', target: '妖精防', lineStyle: halfLineStyle },
-    // { source: '虫攻', target: '妖精防', lineStyle: halfLineStyle },
-    // { source: '恶攻', target: '妖精防', lineStyle: halfLineStyle },
-];
-
-
-
-function createLink(fromNode, toNode, linkType) {
-    return {
-        source: fromNode,
-        target: toNode,
+// links
+function superEffectiveLineStyle(_isOn) {
+    if (_isOn) {
+        return {
+            color: 'green',
+            width: 3,
+        };
+    } else {
+        return {
+            color: 'green',
+            width: 1,
+        };
     }
 }
 
+function notVeryEffectiveLineStyle(_isOn) {
+    if (_isOn) {
+        return {
+            color: 'red',
+            width: 3,
+        };
+    } else {
+        return {
+            color: 'red',
+            width: 1,
+        };
+    }
+}
 
-//TODO 属性自己和自己相克的逻辑
+function notEffectiveLineStyle(_isOn) {
+    if (_isOn) {
+        return {
+            color: 'black',
+            type: 'dashed',
+            width: 3,
+        };
+    } else {
+        return {
+            color: 'grey',
+            type: 'dashed',
+            width: 1,
+        };
+    }
+}
 
+var defaultLineStyle = {
 
+}
+
+// tests
+// var links = [
+//     { source: '格斗', target: '一般', lineStyle: superEffectiveLineStyle },
+// ];
+
+function createLink(_fromNode, _toNode, _effect) {
+    var _linkType = function () {
+        switch (_effect) {
+            case '效果绝佳':
+                return {
+                    lineStyle: superEffectiveLineStyle(isOn.superEffective),
+                    ignoreForceLayout: !isOn.superEffective
+                };
+                break;
+            case '效果不好':
+                return {
+                    lineStyle: notVeryEffectiveLineStyle(isOn.notVeryEffective),
+                    ignoreForceLayout: !isOn.notVeryEffective
+                };
+                break;
+            case '没有效果':
+                return {
+                    lineStyle: notEffectiveLineStyle(isOn.notEffective),
+                    ignoreForceLayout: !isOn.notEffective
+                };
+                break;
+            default:
+                return { lineStyle: defaultLineStyle, ignoreForceLayout: true };
+        }
+    }
+
+    return {
+        source: _fromNode,
+        target: _toNode,
+        lineStyle: _linkType().lineStyle,
+        ignoreForceLayout: _linkType().ignoreForceLayout,
+    };
+}
+
+function pyDictListToLinks(pyDictList) {
+    var _links = [];
+    pyDictList.forEach(item => {
+        _links.push(
+            createLink(item.from, item.to, item.effect)
+        );
+    });
+    return _links;
+}
+
+//TODO: 属性自己和自己相克的逻辑
 option = {
     color: typeColor,
-
     title: {
         text: '属性相克表'
     },
@@ -199,8 +155,8 @@ option = {
     series: [
         {
             type: 'graph',
-            // layout: 'force',
-            layout: 'circular',
+            layout: 'force',
+            // layout: 'circular',
             categories: pokemonTypeCategories,
             legendHoverLink: false, // 这一项似乎有bug？不管hover哪个legend高亮的都一样
             //legendHoverLink: true, 
@@ -229,7 +185,7 @@ option = {
 
             //数据
             data: pokemonTypeNodes,
-            links: links,
+            links: pyDictListToLinks(ordinaryMatchups),//links,
         }
     ]
 };

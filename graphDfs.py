@@ -1,8 +1,7 @@
 from collections import defaultdict
 import copy
 
-
-def getDictRemoveEmptyKeys(_dict:dict):
+def removeEmptyKeys(_dict:dict):
     _result = copy.deepcopy(_dict)
     for _key in _dict:
         if len(_dict[_key]) == 0:
@@ -58,7 +57,7 @@ class Graph:
         self.loops.append(newList)
     
     # 查找所有环 cf. https://www.freesion.com/article/9695621669/
-    # 该DFS算法与起始点有关
+    # 该DFS算法与起始点有关，所以需要遍历各种起始点
     def dfs(self, starterVertex):
         if(starterVertex in self.visitedVertex):
             if(starterVertex in self.trace):
@@ -88,11 +87,16 @@ class Graph:
             self.dfs(_vertex)
         return self.loops
     
-    def getGraph(self):
-        return getDictRemoveEmptyKeys(self.graph)
+    def toDict(self, _graph, _effect):
+        _dict = []
+        for _from in _graph:
+            for _to in _graph[_from]:
+                _dict.append({'from': _from, 'to':_to, 'effect': _effect})
+        return _dict
 
-    #排除环后的Graph
-    def getNonLoopGraph(self):
+    #分离在环中和不在环中的Graph
+    def getSplitGraph(self):
+        _loopGraph = Graph()
         nonLoopGraph = copy.deepcopy(self.graph)
         _pairs = set()
         for _loop in self.loops:
@@ -100,32 +104,11 @@ class Graph:
                 _pairs.add(tuple([_loop[_i - 1], _loop[_i]])) # list is unhashable
                 if _loop[_i] in nonLoopGraph[_loop[_i - 1]]:
                     nonLoopGraph[_loop[_i - 1]].remove(_loop[_i])
-        print(f'>In Loop Nb  : {len(_pairs)}')
+                    _loopGraph.addEdge(_loop[_i], _loop[_i - 1])
 
-        nonLoopGraph=getDictRemoveEmptyKeys(nonLoopGraph)
-        nbNonLoop = 0
-        for _chain in nonLoopGraph:
-            nbNonLoop += len(nonLoopGraph[_chain])
-        print(f'>Not in Loop : {nbNonLoop}')
-        return nonLoopGraph
-    
-    def toMatchupDict(self, _effect):
-        _dict = []
-        for _from in self.graph:
-            for _to in self.graph[_from]:
-                _dict.append({'from': _from, 'to':_from, 'effect': _effect})
-        return _dict
-
-
-# g = Graph(7)
-# g.addEdge('0', '1')
-# g.addEdge('0', '2')
-# g.addEdge('1', '3')
-# g.addEdge('2', '5')
-# g.addEdge('3', '4')
-# g.addEdge('4', '2')
-# g.addEdge('5', '4')
-# g.addEdge('5', '6')
-# g.addEdge('6', '0')
-# g.addEdge('6', '2')
-# g.dfs('1')
+        nonLoopGraph=removeEmptyKeys(nonLoopGraph)
+            
+        return {
+            'loop': _loopGraph.graph,
+            'nonLoop': nonLoopGraph
+        }
