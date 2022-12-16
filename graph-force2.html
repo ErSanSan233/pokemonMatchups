@@ -33,7 +33,15 @@
   
   <script src = "definitions.js"></script>
   <script src = "ordinaryMatchups.js"></script>
+  <script src = "bidirectionalMatchups.js"></script>
+  <script src = "selfMatchups.js"></script>
   <script src = "graphsplit.js"></script>
-  <input type = "button" value = "效果绝佳显示" onclick = "switchSuperEffective();">
+  <!-- <input type = "button" value = "效果绝佳显示" onclick = "switchSuperEffective();"> -->
+  <input type = "button" value = "克抗环显示" onclick = "switchEffective('loop');">
+  <input type = "button" value = "克抗显示" onclick = "switchEffective('noLoopBidirectional');">
+  <input type = "button" value = "TODO自己打自己显示" onclick = "switchEffective('self');">
+  <input type = "button" value = "效果绝佳显示" onclick = "switchEffective('superEffective');">
+  <input type = "button" value = "效果不好显示" onclick = "switchEffective('notVeryEffective');">
+  <input type = "button" value = "没有效果显示" onclick = "switchEffective('notEffective');">
 </body>
 </html>

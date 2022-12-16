@@ -34,10 +34,10 @@ print(f'Bidirectional: {len(toRemove)}')
 print(f'>Current Left: {len(matchupDictList)}')
 bidirectionalEffect.findAllLoops(typeList)  
 
-loops = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['loop'], '抗克环')
-nonloops = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['nonLoop'], '抗克')
-# print(loops)
-# print(nonloops)
+loopDict = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['loop'], '抗克环')
+noloopDict = bidirectionalEffect.toDict(bidirectionalEffect.getSplitGraph()['nonLoop'], '抗克')
+print(loopDict)
+print(noloopDict)
 
 # 自指关系，即自己打自己时的特殊关系
 selfAttack = []
@@ -50,6 +50,19 @@ for _ in selfAttack:
     matchupDictList.remove(_)
 
 # json件导入查了半天没搞明白，直接写成js文件
+with open('typeMatchups/bidirectionalMatchups.js', 'w') as f:
+    f.write('var loopMatchups = ')
+    json.dump(loopDict, f)
+    f.write(';')
+    f.write('var noLoopBidirectionalMatchups = ')
+    json.dump(noloopDict, f)
+    f.write(';')
+
+with open('typeMatchups/selfMatchups.js', 'w') as f:
+    f.write('var selfMatchups = ')
+    json.dump(selfAttack, f)
+    f.write(';')
+
 with open('typeMatchups/ordinaryMatchups.js', 'w') as f:
     f.write('var ordinaryMatchups = ')
     json.dump(matchupDictList, f)

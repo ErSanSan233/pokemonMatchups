@@ -8,7 +8,6 @@ def removeEmptyKeys(_dict:dict):
             del _result[_key]
     return _result
 
-# TODO Graph to dict, dict to CSV
 # 图的数据结构 cf. https://blog.csdn.net/qq_38204302/article/details/104823470
 class Graph:
     def __init__(self):
@@ -104,7 +103,7 @@ class Graph:
                 _pairs.add(tuple([_loop[_i - 1], _loop[_i]])) # list is unhashable
                 if _loop[_i] in nonLoopGraph[_loop[_i - 1]]:
                     nonLoopGraph[_loop[_i - 1]].remove(_loop[_i])
-                    _loopGraph.addEdge(_loop[_i], _loop[_i - 1])
+                    _loopGraph.addEdge(_loop[_i-1], _loop[_i])
 
         nonLoopGraph=removeEmptyKeys(nonLoopGraph)
             

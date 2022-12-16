@@ -11,10 +11,20 @@ var option;
 var pokemonTypeNodes = [];
 var pokemonTypeCategories = [];
 
+function selfBorderColor(_type){
+    //TODO
+    return 'green'
+}
+
 for (var i = 0; i < typeList.length; i++) {
     pokemonTypeNodes.push({
         name: typeList[i],
         category: typeList[i],
+        itemStyle: {
+            borderColor: selfBorderColor(),
+            borderWidth: 3,
+            lineStyle: 'dashed'
+        }
     })
 
     pokemonTypeCategories.push({
@@ -31,14 +41,49 @@ var isOn = {
     notVeryEffective: true,
     notEffective: true,
 }
+
 //TODO
-function switchSuperEffective() {
-    isOn.superEffective = !isOn.superEffective;
-    option.series[0].links = pyDictListToLinks(ordinaryMatchups);
+function switchEffective(_name){
+    isOn[_name] = !isOn[_name];
+    option.series[0].links = pyDictListToLinks(allLinks);
     myChart.setOption(option);
 }
 
 // links
+function loopLineStyle(_isOn){
+    if (_isOn) {
+        return {
+            color: 'purple',
+            width: 3,
+            curveness: 0.2
+        };
+    } else {
+        return {
+            color: 'purple',
+            width: 1,
+            curveness: 0.2,
+            opacity: 0.3,
+        };
+    }
+}
+
+function noLoopBidirectionalLineStyle(_isOn){
+    if (_isOn) {
+        return {
+            color: 'blue',
+            width: 3,
+            curveness: 0.1
+        };
+    } else {
+        return {
+            color: 'blue',
+            width: 1,
+            curveness: 0.1,
+            opacity: 0.3,
+        };
+    }
+}
+
 function superEffectiveLineStyle(_isOn) {
     if (_isOn) {
         return {
@@ -49,6 +94,7 @@ function superEffectiveLineStyle(_isOn) {
         return {
             color: 'green',
             width: 1,
+            opacity: 0.3,
         };
     }
 }
@@ -63,6 +109,7 @@ function notVeryEffectiveLineStyle(_isOn) {
         return {
             color: 'red',
             width: 1,
+            opacity: 0.3,
         };
     }
 }
@@ -73,12 +120,16 @@ function notEffectiveLineStyle(_isOn) {
             color: 'black',
             type: 'dashed',
             width: 3,
+            curveness: 0.2,
+            
         };
     } else {
         return {
             color: 'grey',
             type: 'dashed',
             width: 1,
+            curveness: 0.2,
+            opacity: 0.3,
         };
     }
 }
@@ -95,6 +146,18 @@ var defaultLineStyle = {
 function createLink(_fromNode, _toNode, _effect) {
     var _linkType = function () {
         switch (_effect) {
+            case '抗克环':
+                return {
+                    lineStyle: loopLineStyle(isOn.loop),
+                    ignoreForceLayout: !isOn.loop
+                };
+                break;
+            case '抗克':
+                return {
+                    lineStyle: noLoopBidirectionalLineStyle(isOn.noLoopBidirectional),
+                    ignoreForceLayout: !isOn.noLoopBidirectional
+                };
+                break;
             case '效果绝佳':
                 return {
                     lineStyle: superEffectiveLineStyle(isOn.superEffective),
@@ -135,6 +198,8 @@ function pyDictListToLinks(pyDictList) {
     });
     return _links;
 }
+
+var allLinks = ordinaryMatchups.concat(selfMatchups).concat(loopMatchups).concat(noLoopBidirectionalMatchups);
 
 //TODO: 属性自己和自己相克的逻辑
 option = {
@@ -185,7 +250,7 @@ option = {
 
             //数据
             data: pokemonTypeNodes,
-            links: pyDictListToLinks(ordinaryMatchups),//links,
+            links: pyDictListToLinks(allLinks),//links,
         }
     ]
 };
