@@ -36,12 +36,14 @@
   <script src = "bidirectionalMatchups.js"></script>
   <script src = "selfMatchups.js"></script>
   <script src = "graphsplit.js"></script>
+  
   <!-- <input type = "button" value = "效果绝佳显示" onclick = "switchSuperEffective();"> -->
-  <input type = "button" value = "克抗环显示" onclick = "switchEffective('loop');">
-  <input type = "button" value = "克抗显示" onclick = "switchEffective('noLoopBidirectional');">
-  <input type = "button" value = "TODO自己打自己显示" onclick = "switchEffective('self');">
-  <input type = "button" value = "效果绝佳显示" onclick = "switchEffective('superEffective');">
-  <input type = "button" value = "效果不好显示" onclick = "switchEffective('notVeryEffective');">
-  <input type = "button" value = "没有效果显示" onclick = "switchEffective('notEffective');">
+  <input type = "checkbox" value = "克抗环显示" onclick = "switchEffective('loop');" checked>克抗环
+  <input type = "checkbox" value = "克抗显示" onclick = "switchEffective('noLoopBidirectional');"checked>克抗
+  <input type = "checkbox" value = "自己打自己显示" onclick = "switchEffective('_self');"checked>自己打自己
+  <input type = "checkbox" value = "效果绝佳显示" onclick = "switchEffective('superEffective');"checked>效果绝佳
+  <input type = "checkbox" value = "效果不好显示" onclick = "switchEffective('notVeryEffective');"checked>效果不好
+  <input type = "checkbox" value = "没有效果显示" onclick = "switchEffective('notEffective');"checked>没有效果
+  <input type = "checkbox" value = "自由拖拽" onclick = "freeDrag();">自由拖拽
 </body>
 </html>
