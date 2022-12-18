@@ -1,5 +1,4 @@
 
-
 // supplement interactions
 var isOn = {
     loop: true, //抗克环

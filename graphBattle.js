@@ -1,19 +1,17 @@
+
 // supplement interactions
 function pyDictListToLinks(pyDictList) {
     var _links = [];
     pyDictList.forEach(item => {
-        _links.push({
-                source: fromNode(item.from),
-                target: item.to
-            }
-        );
+        _links.push(createLink(
+                fromNode(item.from),
+                item.to,
+                item.effect));
 
-        _links.push({
-                source: item.from,
-                target: toNode(item.to)
-            }
-        );
-
+        _links.push(createLink(
+            item.from,
+            toNode(item.to),
+            item.effect));
     });
     return _links;
 }
@@ -39,12 +37,12 @@ function createNodes() {
     pokemonTypeCategories = [];
 
     for (var i = 0; i < typeList.length; i++) {
-        var _y = yFrom + i*yStep;
+        var _y = yFrom + i * yStep;
         pokemonTypeNodes.push({
             name: typeList[i],
             category: typeList[i],
-            x : x,
-            y : _y,
+            x: x,
+            y: _y,
             itemStyle: {
 
             }
@@ -52,7 +50,7 @@ function createNodes() {
 
         pokemonTypeNodes.push({
             name: fromNode(typeList[i]),
-            x:xFrom,
+            x: xFrom,
             y: _y,
             itemStyle: {
                 color: typeColor[i],
@@ -61,8 +59,8 @@ function createNodes() {
 
         pokemonTypeNodes.push({
             name: toNode(typeList[i]),
-            x:xTo,
-            y:_y,
+            x: xTo,
+            y: _y,
             itemStyle: {
                 color: typeColor[i],
             }
@@ -75,6 +73,51 @@ function createNodes() {
 }
 
 // links
+function superEffectiveLineStyle() {
+    return {
+        color: 'green',
+        // width: 3,
+    };
+}
+
+function notVeryEffectiveLineStyle() {
+    return {
+        color: 'red',
+        // width: 3,
+    };
+}
+
+function notEffectiveLineStyle() {
+    return {
+        color: 'black',
+        type: 'dashed',
+        // width: 3,
+    };
+}
+
+function createLink(_fromNode, _toNode, _effect) {
+    var _linkType = function () {
+        switch (_effect) {
+            case '效果绝佳':
+                return superEffectiveLineStyle();
+                break;
+            case '效果不好':
+                return notVeryEffectiveLineStyle();
+                break;
+            case '没有效果':
+                return notEffectiveLineStyle();
+                break;
+            default:
+                return {};
+        }
+    }
+
+    return {
+        source: _fromNode,
+        target: _toNode,
+        lineStyle: _linkType(),
+    };
+}
 
 // graph
 var dom = document.getElementById('container');
