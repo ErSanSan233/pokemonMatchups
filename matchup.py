@@ -13,6 +13,10 @@ matchupDictList = typeMatchups.to_dict('records')
 # TODO 属性相克的邻接矩阵，用于核对CSV的数据是否正确
 
 print(f'Total Effect : {len(matchupDictList)}')
+with open('typeMatchups/allMatchups.js', 'w') as f:
+    f.write('var allMatchups = ')
+    json.dump(matchupDictList, f)
+    f.write(';')
 
 # 克抗关系，即A对B效果绝佳，B对A效果不好
 bidirectionalEffect = graphDfs.Graph()
